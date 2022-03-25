@@ -4,9 +4,9 @@ from cvzone.HandTrackingModule import HandDetector
 from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from math import hypot
-import numpy as np
 import win32api
 import ctypes
+import numpy
 import cv2
 
 # Variables
@@ -15,12 +15,12 @@ delay = 50
 delayCounter = 0
 
 # Camera settings
-cap = cv2.VideoCapture(0)
-cap.set(0, width)
-cap.set(0, height)
+cam = cv2.VideoCapture(0)
+cam.set(0, width)
+cam.set(0, height)
 
 # Hand detector
-detectorHand = HandDetector(detectionCon=0.9, maxHands=1)
+hand = HandDetector(detectionCon=0.9, maxHands=1)
 
 # Audio
 devices = AudioUtilities.GetSpeakers()
@@ -32,21 +32,27 @@ volMin, volMax = volume.GetVolumeRange()[:2]
 while True:
 
     # Get the image from the camera
-    success, img = cap.read()
+    success, img = cam.read()
     img = cv2.flip(img, 1)
 
+    # Show text for close the application
     cv2.putText(img, 'Press any key to close', (0, 15), cv2.FONT_HERSHEY_TRIPLEX, 0.5, (0, 60, 245), 1)
 
+    # If the camera device is not found
     if not success:
-        cap = cv2.VideoCapture(1)
-        success, frame = cap.read()
+        # Checks if there is another camera device
+        cam = cv2.VideoCapture(1)
+        success, frame = cam.read()
         img = cv2.flip(img, 1)
+
+        # If another camera device is not found
         if not success:
+            # Show message and close the application
             ctypes.windll.user32.MessageBoxW(0, "Could not find your camera, check your device.", "Camera not found", 0)
             break
 
     # Find the hand and its landmarks
-    hands, img = detectorHand.findHands(img)
+    hands, img = hand.findHands(img)
 
     # If the hand is detected
     if hands:
@@ -54,21 +60,21 @@ while True:
         lmList = hands[0]["lmList"]
 
         # List which fingers are raised
-        fingers = detectorHand.fingersUp(hands[0])
+        fingers = hand.fingersUp(hands[0])
 
         # If the index, middle and ring fingers are raised
         if fingers == [0, 1, 1, 1, 0]:
             # Get the position of the fingers
-            y = int(np.interp(lmList[8][1], [20, width], [10, width]))
+            y = int(numpy.interp(lmList[8][1], [20, width], [10, width]))
 
             # Adjusts volume according to finger position
-            vol = np.interp(hypot(y), [15, 220], [volMax, volMin])
+            vol = numpy.interp(hypot(y), [15, 220], [volMax, volMin])
             volume.SetMasterVolumeLevel(vol, None)
 
         # If the index and middle fingers are raised
         if fingers == [0, 1, 1, 0, 0]:
             # Get the distance between the index and middle fingers
-            length, info, img = detectorHand.findDistance(lmList[8], lmList[12], img)
+            length, info, img = hand.findDistance(lmList[8], lmList[12], img)
 
             # If the distance between the index and middle finger is greater than 70
             if length > 25:
@@ -81,7 +87,6 @@ while True:
 
         # If the thumb is up
         if fingers == [1, 0, 0, 0, 0]:
-            # Get the position of the fingers
             # Delay for next media
             delayCounter += 1
             if delayCounter > delay:
