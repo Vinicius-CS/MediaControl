@@ -62,7 +62,7 @@ while True:
         # List which fingers are raised
         fingers = hand.fingersUp(hands[0])
 
-        # If the index, middle and ring fingers are raised
+        # Volume control: If the index, middle and ring fingers are raised
         if fingers == [0, 1, 1, 1, 0]:
             # Get the position of the fingers
             y = int(numpy.interp(lmList[8][1], [20, width], [10, width]))
@@ -71,7 +71,7 @@ while True:
             vol = numpy.interp(hypot(y), [15, 220], [volMax, volMin])
             volume.SetMasterVolumeLevel(vol, None)
 
-        # If the index and middle fingers are raised
+        # Pause and Play: If the index and middle fingers are raised
         if fingers == [0, 1, 1, 0, 0]:
             # Get the distance between the index and middle fingers
             length, info, img = hand.findDistance(lmList[8], lmList[12], img)
@@ -85,7 +85,7 @@ while True:
                     # Pause or play
                     win32api.keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_EXTENDEDKEY, 0)
 
-        # If the thumb is up
+        # Next media: If the thumb is up
         if fingers == [1, 0, 0, 0, 0]:
             # Delay for next media
             delayCounter += 1
@@ -94,7 +94,7 @@ while True:
                 # Next media
                 win32api.keybd_event(VK_MEDIA_NEXT_TRACK, 0, KEYEVENTF_EXTENDEDKEY, 0)
 
-        # If the little finger is raised
+        # Previous media: If the little finger is raised
         if fingers == [0, 0, 0, 0, 1]:
             # Delay go back to previous media
             delayCounter += 1
