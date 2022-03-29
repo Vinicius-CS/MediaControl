@@ -8,6 +8,10 @@ Hi! With **MediaControl** you can use hand gestures to control videos and music 
 
 <img src="https://i.imgur.com/ZLBRTPf.png" width="10%"></img> <img src="https://i.imgur.com/1OIod8o.png" width="10%"></img> <img src="https://i.imgur.com/6TpzAhc.png" width="10%"></img> <img src="https://i.imgur.com/4ZRItTk.png" width="10%"></img>
 
+### Contributors
+
+- [Mateus da Cruz da Silva](https://github.com/MateusOFCZ)
+
 # Installation and Configuration
 
 ### PyCharm
